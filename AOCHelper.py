@@ -29,6 +29,9 @@ def readinput_lines(filename):
     file = open(filename, "r")    
     return [line.strip() for line in file]
 
+def readinput_as_string(filename):   
+    file = open(filename, "r")    
+    return [line for line in file]
 
 def readinput_lines_skip_enters(filename):   
     file = open(filename, "r")    
@@ -377,6 +380,21 @@ class FileHelper:
 
     return arrays
 
+  def get_arrays_ints_from_separator(self,lines,separator):
+    # Reads all lines and creates array for each seperator found (mostly blanc line)
+    arrays = []    
+    lineid = 0
+   
+    while lineid < len(lines):
+        arr = []
+        while lineid < len(lines) and lines[lineid]:
+            if lines[lineid]==separator: break
+            arr.append(int(lines[lineid].strip()))
+            lineid += 1
+        lineid += 1
+        arrays.append(arr)
+
+    return arrays
 class Compass:
   compasspoints = {'N': (0, 1), 'E': (1, 0), 'S': (0, -1), 'W': (-1, 0)} # Can be used for north/south, east/west calculation
   hexaspoints= {"E": (1, 0), "W": (-1, 0), "SE": (0, 1), "SW": (-1, 1), "NE": (1, -1), "NW": (0, -1)}
