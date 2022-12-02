@@ -58,6 +58,15 @@ def removekeyfromdict(d, key):
       del r[key]
    
    return r  
+
+#Accepts string and shift it around
+#ABC, 1=CAB, 2=BCA
+def shift_string(s, shift):
+    if shift > len(s):
+        return s[::-1]
+    return s[shift:] + s[:shift]
+
+
 """ A Python Class
 A simple Python graph class, demonstrating the essential 
 facts and functionalities of graphs.
