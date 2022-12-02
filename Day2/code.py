@@ -18,8 +18,7 @@ def first_star():
     
     for line in input:
         elf,me = line.split()
-        score = int(shift_string("360",-"ABC".index(elf))["XYZ".index(me)]) + " XYZ".index(me)
-        result+=score
+        result+=int(shift_string("360",-"ABC".index(elf))["XYZ".index(me)]) + " XYZ".index(me)
 
     print("Result First Star")
     print(result)
