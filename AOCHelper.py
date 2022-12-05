@@ -29,6 +29,10 @@ def readinput_lines(filename):
     file = open(filename, "r")    
     return [line.strip() for line in file]
 
+def readinput_lines_no_strip(filename):   
+    file = open(filename, "r")    
+    return [line for line in file]
+
 def readinput_as_string(filename):   
     file = open(filename, "r")    
     return [line for line in file]
