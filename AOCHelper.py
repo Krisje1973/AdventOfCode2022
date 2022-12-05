@@ -31,7 +31,7 @@ def readinput_lines(filename):
 
 def readinput_lines_no_strip(filename):   
     file = open(filename, "r")    
-    return [line for line in file]
+    return [line for line in file if line.strip() != '']
 
 def readinput_as_string(filename):   
     file = open(filename, "r")    
