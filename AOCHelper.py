@@ -48,6 +48,14 @@ def readinput_lines_as_ints(filename):
       input.append(int(line)) 
     return input
 
+def readinput_lines_as_str(filename):   
+    file = open(filename, "r")    
+    input=""
+    for line in [line.strip() for line in file]:
+        for s in line:
+            input += s
+    return input
+
 def readinput_lines_as_ints_with_separator(filename,separator):   
     file = open(filename, "r")    
     input=[]
