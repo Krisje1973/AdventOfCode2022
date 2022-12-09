@@ -5,17 +5,49 @@ from  AOCHelper import *
 input = []
 def readinput():
    global input
-   input = readinput_lines("Day1\input.txt")
+   input = readinput_lines("Day9\input.txt")
   
 def main():
    readinput()
    first_star()
-   second_star()        
+   #second_star()        
           
 def first_star():
-    if second_star() != "NYI" : return
-    print("Result First Star")
+    #6318 to high
+    h=(0,0)
+    t=(-1,0)
+    dirs = defaultdict(tuple)
+    dirs["R"] = (1,0)
+    dirs["L"] = (-1,0)
+    dirs["U"] = (0,1)
+    dirs["D"] = (0,-1)
+    result = set()
+    for line in input:
+        d,c = line.split()
+        
+        for i in range(int(c)):
+            move = dirs[d]
+            h = tuple(map(sum,zip(h,move)))
+            if h == t:
+                continue
 
+            s = tuple(a - b for a, b in zip(h, t))
+            
+            if (abs(s[0]),abs(s[1])) == (1, 1):
+                continue
+
+            if abs(s[1]) == 1 and s[0] ==0:
+                continue
+
+            if abs(s[0]) == 1 and s[1] ==0:
+                continue
+
+            t = tuple(map(sum,zip(h,(-move[0],-move[1]))))
+            result.add(t)
+    
+    print("Result First Star")
+    print(len(result)-1)
+   
 def second_star():
     return "NYI"
 
