@@ -5,7 +5,7 @@ from  AOCHelper import *
 input = []
 def readinput():
    global input
-   input = readinput_lines("Day9\input_ex.txt")
+   input = readinput_lines("Day9\input.txt")
   
 def main():
    readinput()
@@ -56,14 +56,14 @@ def second_star():
     dirs["D"] = (0,-1)
     result = set()
     snakes = [(0, 0) for i in range(10)]
+
     for line in input:
         d,c = line.split()
         
         for i in range(int(c)):
             move = dirs[d]
             snakes[0] = tuple(map(sum,zip(snakes[0],move)))
-            if d=="U":
-                l=1
+          
             for i,snake in enumerate(snakes[1:]):
                 h,t=snakes[i],snake
                 if h == t:
@@ -80,15 +80,25 @@ def second_star():
                 if abs(s[0]) == 1 and s[1] == 0:
                     continue
 
-                if abs(s[0]) == 2:
-                    snakes[i+1] = tuple(map(sum,zip(snakes[i+1],(1,1))))
-                else:
-                    snakes[i+1] = tuple(map(sum,zip(h,(-move[0],-move[1]))))
+                a,b = s[0],s[1]
+                if a == 2:
+                    a = 1
+                
+                if b == 2:
+                    b = 1
+
+                if a == -2:
+                        a = -1
+                
+                if b == -2:
+                    b = -1
+   
+                snakes[i+1] = tuple(map(sum,zip(snakes[i+1],(a,b))))
 
             result.add(snakes[9])
             
     print("Result Second Star")
-    print(len(result)-1)
+    print(len(result))
 
 if __name__ == '__main__':
     main()

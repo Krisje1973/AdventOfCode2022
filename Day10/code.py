@@ -35,17 +35,15 @@ def check_cycle(cycle,x):
 
     return 0
 
-def second_star():
-    crt = []
-    for i in range(6):
-        crt.append([0 for i in range(40)]) 
+def second_star(): 
     x=1
     cycle=0
     row = -1
+    crt =  [[ 0 for _ in range(40)] for _ in range(6)]
     for line in input:
         i= line.count("addx") + 1
 
-        for j in range(i):
+        for _ in range(i):
             cm=cycle % 40 
             row += (cm == 0)
             crt[row][cm] = int(cm in (x- 1, x, x + 1))
