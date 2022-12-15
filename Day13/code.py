@@ -12,10 +12,10 @@ def readinput():
    compares[(list,int)] = lambda a,b: compares[list,list](a, [b])
    compares[(int,list)] = lambda a,b: compares[list,list]([a], b)
    compares[(list,list)] = lambda a,b: zip_list(a,b)
-  
+
 def main():
    readinput()
-   first_star()
+   #first_star()
    second_star()        
 
 def zip_list(a,b):
@@ -34,10 +34,22 @@ def first_star():
     print("Result First Star")
     print(t)    
 
-def second_star():
-    return "NYI"
 
+def second_star():
+    #33580 to high
+    li=[]
+    input = readinput_lines_skip_enters("Day13\input.txt")
+    for line in input:
+        #li.append(str(line.replace("[","").replace("]","")))
+        li.append(str(line))
+    li.append("[[2]]")
+    li.append("[[6]]")
+    li.sort()
+    for l in li:
+        print(l)
+    print((li.index("[[2]]")+1))
     print("Result Second Star")
+ 
 
 if __name__ == '__main__':
     main()
