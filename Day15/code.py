@@ -3,10 +3,18 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from  AOCHelper import * 
 input = []
+se,be=[],[]
 def readinput():
-   global input
-   input = readinput_lines("Day1\input.txt")
-  
+    global input
+    global se,be
+    input = readinput_lines("Day15\input_ex.txt")
+    
+    for s in input:
+        se.append((int(s.split("x=")[1].split(",")[0]),int(s.split("y=")[1].split(",")[0].split(":")[0])))
+        be.append((int(s.split("x=")[2].split(",")[0]),int(s.split("x=")[2].split(",")[1].split("=")[1])))
+    print(se,be)
+        
+   
 def main():
    readinput()
    first_star()

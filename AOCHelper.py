@@ -2,6 +2,13 @@ from functools import reduce
 from collections import defaultdict 
 import sys
 import re
+from queue import PriorityQueue
+from queue import Queue
+import heapq
+from math import inf
+
+def open_file(filename) :
+    return open(filename).read()
 
 def readinput_dict_as_ints(filename):    
     input = {}
@@ -470,6 +477,11 @@ class GridHelper:
     if 0 <= y + dy < len(grid) # Check y bounds
     and 0 <= x + dx < len(grid[x]) # check x bounds
     and (dx, dy) != (0, 0)]  # not self
+
+  def get_3d_suroundings(self,x,y,z):
+    sur = [(0, 0, 1),(0, 1, 0),(1, 0, 0),(0, 0, -1),(0, -1, 0),(-1, 0, 0)]
+    for side in sur:
+        yield tuple(sum(tup) for tup in zip((x,y,z), side))
  
   def join_lines_from_list(self,mylist): 
       return "".join("".join(row) for row in mylist)
@@ -597,94 +609,78 @@ class IndexedReader():
     def getpointer(self,key):
         return self.positions[key]
 
-class GraphForDijckstra(object):
-    def __init__(self, nodes, init_graph):
-        self.nodes = nodes
-        self.graph = self.construct_graph(nodes, init_graph)
-        
-    def construct_graph(self, nodes, init_graph):
-        '''
-        This method makes sure that the graph is symmetrical. In other words, if there's a path from node A to B with a value V, there needs to be a path from node B to node A with a value V.
-        '''
-        graph = {}
-        for node in nodes:
-            graph[node] = {}
-        
-        graph.update(init_graph)
-        
-        for node, edges in graph.items():
-            for adjacent_node, value in edges.items():
-                if graph[adjacent_node].get(node, False) == False:
-                    graph[adjacent_node][node] = value
-                    
-        return graph
-    
-    def get_nodes(self):
-        "Returns the nodes of the graph."
-        return self.nodes
-    
-    def get_outgoing_edges(self, node):
-        "Returns the neighbors of a node."
-        connections = []
-        for out_node in self.nodes:
-            if self.graph[node].get(out_node, False) != False:
-                connections.append(out_node)
-        return connections
-    
-    def value(self, node1, node2):
-        "Returns the value of an edge between two nodes."
-        return self.graph[node1][node2]
+def bfs(Adj, s):  # Adj: adjacency list, s: starting vertex
+    parent = [None for v in Adj]  # O(V) (use hash if unlabeled)
+    parent[s] = s  # O(1) root
+    dist = [None for v in Adj]
+    dist[s] = 0
+    levels = [[s]]  # O(1) initialize levels
+    while levels[-1]:  # O(?) last level contains vertices
+        frontier = []  # O(1), make new level
+        for u in levels[-1]:  # O(?) loop over last full level
+            for v in Adj[u]:  # O(Adj[u]) loop over neighbors
+                if parent[v] is None:  # O(1) parent not yet assigned
+                    parent[v] = u  # O(1) assign parent from levels[-1]
+                    dist[v] = dist[u] + 1
+                    frontier.append(v)  # O(1) amortized, add to border
+        levels.append(frontier)  # add the new level to levels
+    return parent, dist    
 
-def dijkstra_algorithm(graph, start_node):
-    unvisited_nodes = list(graph.get_nodes())
- 
-    # We'll use this dict to save the cost of visiting each node and update it as we move along the graph   
-    shortest_path = {}
- 
-    # We'll use this dict to save the shortest known path to a node found so far
-    previous_nodes = {}
- 
-    # We'll use max_value to initialize the "infinity" value of the unvisited nodes   
-    max_value = sys.maxsize
-    for node in unvisited_nodes:
-        shortest_path[node] = max_value
-    # However, we initialize the starting node's value with 0   
-    shortest_path[start_node] = 0
-    
-    # The algorithm executes until we visit all nodes
-    while unvisited_nodes:
-        # The code block below finds the node with the lowest score
-        current_min_node = None
-        for node in unvisited_nodes: # Iterate over the nodes
-            if current_min_node == None:
-                current_min_node = node
-            elif shortest_path[node] < shortest_path[current_min_node]:
-                current_min_node = node
-                
-        # The code block below retrieves the current node's neighbors and updates their distances
-        neighbors = graph.get_outgoing_edges(current_min_node)
-        for neighbor in neighbors:
-            tentative_value = shortest_path[current_min_node] + graph.value(current_min_node, neighbor)
-            if tentative_value < shortest_path[neighbor]:
-                shortest_path[neighbor] = tentative_value
-                # We also update the best path to the current node
-                previous_nodes[neighbor] = current_min_node
- 
-        # After visiting its neighbors, we mark the node as "visited"
-        unvisited_nodes.remove(current_min_node)
-    
-    return previous_nodes, shortest_path
+def dijkstra(adj, start, target):
+    d = {start: 0}
+    parent = {start: None}
+    pq = [(0, start)]
+    visited = set()
+    while pq:
+        du, u = heapq.heappop(pq)
+        if u in visited: continue
+        if u == target:
+            break
+        visited.add(u)
+        for v, weight in adj[u]:
+            if v not in d or d[v] > du + weight:
+                d[v] = du + weight
+                parent[v] = u
+                heapq.heappush(pq, (d[v], v))
 
-def print_dijckstra_result(previous_nodes, shortest_path, start_node, target_node):
-    path = []
-    node = target_node
-    
-    while node != start_node:
-        path.append(node)
-        node = previous_nodes[node]
 
-    # Add the start node manually
-    path.append(start_node)
-    
-    print("We found the following best path with a value of {}.".format(shortest_path[target_node]))
-    print(" -> ".join(reversed(path)))
+    return parent, d
+
+def dfs(adj, v, parent, order):
+    if not parent:
+        parent[v] = None
+    # checking neighbours of v
+    for n in adj[v]:
+        if n not in parent:
+            parent[n] = v
+            dfs(adj, n, parent, order)
+
+    # we're done visiting a node only when we're done visiting
+    # all of its descendents first
+    order.append(v)
+
+
+def topological_sort(adj):
+    parent = {}
+    order = []
+    for v in adj.keys():
+        if v not in parent:
+            parent[v] = None
+            dfs(adj, v, parent, order)
+
+    return list(reversed(order))
+
+def dag_shortest_path(adj, source, dest):
+    order = topological_sort(adj)
+    parent = {source: None}
+    d = {source: 0}
+
+    for u in order:
+        if u not in d: continue  # get to the source node
+        if u == dest: break
+        for v, weight in adj[u]:
+            if v not in d or d[v] > d[u] + weight:
+                d[v] = d[u] + weight
+                parent[v] = u
+
+    return parent, d
