@@ -44,6 +44,10 @@ def readinput_lines_no_strip(filename):
     file = open(filename, "r")    
     return [line for line in file if line.strip() != '']
 
+def readinput_lines_no_strip_no_enter(filename):   
+    file = open(filename, "r")    
+    return [line.replace("\n","") for line in file if line.strip() != '']
+
 def readinput_as_string(filename):   
     file = open(filename, "r")    
     return [line for line in file]
@@ -427,17 +431,19 @@ class FileHelper:
         arrays.append(arr)
 
     return arrays
+
 class Compass:
-  compasspoints = {'N': (0, 1), 'E': (1, 0), 'S': (0, -1), 'W': (-1, 0)} # Can be used for north/south, east/west calculation
-  hexaspoints= {"E": (1, 0), "W": (-1, 0), "SE": (0, 1), "SW": (-1, 1), "NE": (1, -1), "NW": (0, -1)}
-  def turnCompassPoint(self,currentdirection,turndirection,degrees):     
-    degrees = (degrees // 90)   
-    if turndirection == "L":
-        degrees=-degrees
-    dirs = list(self.compasspoints.keys())
-    idx = dirs.index(currentdirection) + degrees
-    idx %= len(dirs)
-    return (dirs[idx:] + dirs[:idx])[0]     
+    compasspoints = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)} # Can be used for north/south, east/west calculation
+    compasspoints_reversed = {'N': (0, 1), 'E': (-1, 0), 'S': (0, -1), 'W': (1, 0)} # Can be used for north/south, east/west calculation
+    hexaspoints= {"E": (1, 0), "W": (-1, 0), "SE": (0, 1), "SW": (-1, 1), "NE": (1, -1), "NW": (0, -1)}
+    def turnCompassPoint(self,currentdirection,turndirection,degrees):     
+        degrees = (degrees // 90)   
+        if turndirection == "L":
+            degrees=-degrees
+        dirs = list(self.compasspoints.keys())
+        idx = dirs.index(currentdirection) + degrees
+        idx %= len(dirs)
+        return (dirs[idx:] + dirs[:idx])[0]     
 
 class GridHelper:
   def get_adjacent(self,input):
