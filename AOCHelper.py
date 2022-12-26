@@ -360,8 +360,7 @@ class Binary:
   def get_int_from_binary_reversed_string(self,s):
     return int(s[::-1],2)
 
-def add_tuples(tup1,tup2):
-    return tuple(sum(tup) for tup in zip(tup1,  tup2))
+
 
 class FileHelper:
   
@@ -468,9 +467,19 @@ class Compass:
 class TupleHelper():
     def add_tuples(self,tuple1,tuple2):
         return tuple(sum(tup) for tup in zip(tuple1,  tuple2))
-    def get_neighbours(self,list,tuple):
-        return list
-
+        
+    def get_neighbours(self,tuple):
+        x,y = tuple
+        for nx, ny in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1):
+            yield (nx, ny)
+    
+    def get_get_neighbours_with_diag(self,tuple):
+        x,y = tuple
+        for nx, ny in (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x-1,y-1), (x+1,y+1),(x-1,y+1), (x+1,y-1):
+            yield (nx, ny)
+            
+def add_tuples(tup1,tup2):
+    return tuple(sum(tup) for tup in zip(tup1,  tup2))
 
 class GridHelper:
   def get_adjacent(self,input):
