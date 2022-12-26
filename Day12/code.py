@@ -46,61 +46,76 @@ def main():
    #second_star()        
           
 def first_star():
-    nodes = []
-    for y,line in enumerate(input):
-        for x, s in enumerate(line):
-            nodes.append((x,y))
+    graph = defaultdict(dict)
+    
+    grid = {
+        (i, j): x
+        for i, row in enumerate(input)
+        for j, x in enumerate(row)
+    }
+    for g in grid:
+        graph[g] = add_tuples(g,Compass())
 
-    init_graph = {}
-    for node in nodes:
-            init_graph[node] = []
-    g = Graph(1)
-    rows=len(input)
-    e=0
-    start=0
-    for y,line in enumerate(input):
-        l=len(line)
-        for x, s in enumerate(line):
-            if s =="E":
-                e=y*1000+x+1
-            if s =="S":
-                start=y*1000+x+1
+    graph = {
+        'a': {'b': 5, 'c': 2},
+        'b': {'a': 5, 'c': 7, 'd': 8},
+        'c': {
+            'a': 2,
+            'b': 7,
+            'd': 4,
+            'e': 8,
+            },
+        'd': {
+            'b': 8,
+            'c': 4,
+            'e': 6,
+            'f': 4,
+            },
+        'e': {'c': 8, 'd': 6, 'f': 3},
+        'f': {'e': 3, 'd': 4},
+        }
 
-            if x < l-1:
-                w=100
-                if abs(string.ascii_lowercase.index(s.lower()) - string.ascii_lowercase.index(line[x+1].lower())) < 2 or string.ascii_lowercase.index(s.lower()) > string.ascii_lowercase.index(line[x+1].lower()) :
-                    init_graph[(x,y)].append((x+1,y))
-                    init_graph[(x+1,y)].append((x,y))
-                    w=1
-            #g.add_edge(y*1000+x,y*1000+x+1,w)
-                     
-            w=100
-            if y < rows -1:
-                if abs(string.ascii_lowercase.index(s.lower()) - string.ascii_lowercase.index(input[y+1][x].lower())) < 2 or string.ascii_lowercase.index(s.lower()) > string.ascii_lowercase.index(input[y+1][x].lower()):
-                     init_graph[(x,y)].append((x,y+1))
-                     init_graph[(x,y+1)].append((x,y))
-                     w=1
-                     #g.add_edge(y*1000+x,(y+1)*1000+x,1)
-    print(find_all_paths(find_all_parents(init_graph, (0,0)), (0,0), (5,2))) 
-            #g.add_edge(y*1000+x,(y+1)*1000+x,w)
-    D = dijkstra(g, e-1)
-    t=[0]   
-    for vertex in range(e):
-       
-        if D[vertex] ==float('inf') :
-            if  t[len(t)-1] == 0:
-                t.pop()
-            t.append(0)
-        else:
-            print("Distance from vertex 0 to vertex", vertex, "is", D[vertex])
-            t[len(t)-1] +=D[vertex]
-    print(min(t))
-    return
-    print(init_graph[(5,2)])
-    previous_nodes, shortest_path = dijkstra_algorithm(graph=init_graph, start_node=(0,0))
-    for i in find_all_paths(init_graph,(0,0),(5,2)):
-        print(len(i))
-    #print_dijckstra_result(previous_nodes, shortest_pat# start_node=(0,0), target_node=(2,5))
+    source = 'a'
+    destination = 'f'
+
+    unvisited = graph
+    shortest_distances = {}
+    route = []
+    path_nodes = {}
+
+    for nodes in unvisited:
+        shortest_distances[nodes] = math.inf
+    shortest_distances[source] = 0
+
+    while unvisited:
+        min_node = None
+        for current_node in unvisited:
+            if min_node is None:
+                min_node = current_node
+            elif shortest_distances[min_node] \
+                > shortest_distances[current_node]:
+                min_node = current_node
+        for (node, value) in unvisited[min_node].items():
+            if value + shortest_distances[min_node] \
+                < shortest_distances[node]:
+                shortest_distances[node] = value \
+                    + shortest_distances[min_node]
+                path_nodes[node] = min_node
+        unvisited.pop(min_node)
+    node = destination
+
+    while node != source:
+        try:
+            route.insert(0, node)
+            node = path_nodes[node]
+        except Exception:
+            print('Path not reachable')
+            break
+    route.insert(0, source)
+
+    if shortest_distances[destination] != math.inf:
+        print('Shortest distance is ' + str(shortest_distances[destination]))
+        print('And the path is ' + str(route))
     print("Result First Star")
 
 def find_all_paths(graph, start, end, path=[]):

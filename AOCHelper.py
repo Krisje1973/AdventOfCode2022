@@ -360,6 +360,8 @@ class Binary:
   def get_int_from_binary_reversed_string(self,s):
     return int(s[::-1],2)
 
+def add_tuples(tup1,tup2):
+    return tuple(sum(tup) for tup in zip(tup1,  tup2))
 
 class FileHelper:
   
@@ -434,8 +436,26 @@ class FileHelper:
 
 class Compass:
     compasspoints = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)} # Can be used for north/south, east/west calculation
-    compasspoints_reversed = {'N': (0, 1), 'E': (-1, 0), 'S': (0, -1), 'W': (1, 0)} # Can be used for north/south, east/west calculation
-    hexaspoints= {"E": (1, 0), "W": (-1, 0), "SE": (0, 1), "SW": (-1, 1), "NE": (1, -1), "NW": (0, -1)}
+    compasspoints_reversed = {'N': (0, 1), 'E': (-1, 0), 'S': (0, -1), 'W': (1, 0)} 
+    hexaspoints = {"N": (0,-1), "E": (1, 0), "W": (-1, 0), "S": (0,1),  "SE": (1, 1), "SW": (-1, 1), "NE": (1, -1), "NW": (-1, -1)}
+    hexaspoints_reversed = {"N": (0,1), "E": (-1, 0), "W": (1, 0), "S": (0,-1),  "SE": (-1, -1), "SW": (1, -1), "NE": (-1, 1), "NW": (1, 1)}
+    
+    def getHexasPoints(self,dir,reversed=False):
+        if reversed:
+            points = self.hexaspoints_reversed
+        else:
+            points=self.hexaspoints
+
+        match dir:
+            case "N":
+                return points["N"],points["NW"],points["NE"]
+            case "E":
+                return points["E"],points["NE"],points["SE"]
+            case "S":
+                return points["S"],points["SE"],points["SW"]
+            case "W":
+                return points["W"],points["NW"],points["SW"]
+
     def turnCompassPoint(self,currentdirection,turndirection,degrees):     
         degrees = (degrees // 90)   
         if turndirection == "L":
@@ -444,6 +464,13 @@ class Compass:
         idx = dirs.index(currentdirection) + degrees
         idx %= len(dirs)
         return (dirs[idx:] + dirs[:idx])[0]     
+
+class TupleHelper():
+    def add_tuples(self,tuple1,tuple2):
+        return tuple(sum(tup) for tup in zip(tuple1,  tuple2))
+    def get_neighbours(self,list,tuple):
+        return list
+
 
 class GridHelper:
   def get_adjacent(self,input):
@@ -690,3 +717,45 @@ def dag_shortest_path(adj, source, dest):
                 parent[v] = u
 
     return parent, d
+
+class BfsGraph:
+     
+    # Constructor
+    def __init__(self):
+ 
+        # default dictionary to store graph
+        self.graph = defaultdict(list)
+ 
+    # function to add an edge to graph
+    def addEdge(self, u, v):
+        self.graph[u].append(v)
+ 
+    # Function to print a BFS of graph
+    def BFS(self, s):
+ 
+        # Mark all the vertices as not visited
+        visited = [False] * (max(self.graph) + 1)
+ 
+        # Create a queue for BFS
+        queue = []
+ 
+        # Mark the source node as
+        # visited and enqueue it
+        queue.append(s)
+        visited[s] = True
+ 
+        while queue:
+ 
+            # Dequeue a vertex from
+            # queue and print it
+            s = queue.pop(0)
+            print(s, end=" ")
+ 
+            # Get all adjacent vertices of the
+            # dequeued vertex s. If a adjacent
+            # has not been visited, then mark it
+            # visited and enqueue it
+            for i in self.graph[s]:
+                if visited[i] == False:
+                    queue.append(i)
+                    visited[i] = True  
