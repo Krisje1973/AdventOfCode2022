@@ -2,6 +2,9 @@ import math
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from  AOCHelper import * 
+from math import prod
+from functools import total_ordering
+
 input = []
 compares = {}
 def readinput():
@@ -16,13 +19,24 @@ def readinput():
 def main():
    readinput()
    #first_star()
-   second_star()        
+   second_star() 
 
 def zip_list(a,b):
     for x, y in zip(a, b):
         if result := compares[(type(x),type(y))](x,y):
             return result
     return len(a) - len(b)
+
+@total_ordering
+class order:
+    def __init__(self, x):
+            self.x = x
+    def __lt__(self, other):
+        return compares[(type(self.x),type(other.x))](self.x,other.x) < 0
+
+    def __eq__(self, other):
+        return compares[(type(self.x),type(other.x))](self.x,other.x) == 0
+
 
 def first_star():
     #1523 = to low
@@ -37,19 +51,19 @@ def first_star():
 
 def second_star():
     #33580 to high
+    #24805
     li=[]
     input = readinput_lines_skip_enters("Day13\input.txt")
     for line in input:
-        #li.append(str(line.replace("[","").replace("]","")))
-        li.append(str(line))
-    li.append("[[2]]")
-    li.append("[[6]]")
-    li.sort()
-    for l in li:
-        print(l)
-    print((li.index("[[2]]")+1))
+        li.append(eval(line))
+    li.append([2])
+    li.append([6])
+    li = sorted(li,key=order)
+    
     print("Result Second Star")
- 
+    print((li.index([2])+1)*(li.index([6])+1))
+    #print((li.index([2])+1)*(li.index([6])+1))
+
 
 if __name__ == '__main__':
     main()
